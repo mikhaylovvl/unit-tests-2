@@ -1,19 +1,30 @@
-import os
 import unittest
 from parameterized import parameterized
-from make_folders import make_folder
-from dotenv import load_dotenv
+from yandex_disc import YaDisc
 
 
 class TestFunctions(unittest.TestCase):
-    load_dotenv()
-    token = os.getenv("TOKEN")
+    fixture = [
+        ("first_folder", 201),
+        ("second_folder", 201),
+        ("third_folder", 201)
+    ]
 
-    fixture = [("https://cloud-api.yandex.net/v1/disk/resources?path=", "first_folder", token, 201),
-               ("https://cloud-api.yandex.net/v1/disk/resources?path=", "second_folder", token, 201),
-               ("https://cloud-api.yandex.net/v1/disk/resources?path=", "second_folder", token, 409)]
+    def setUp(self):
+        self.api_ya = YaDisc()
+        self.name = ""
 
     @parameterized.expand(fixture)
-    def test_make_folder(self, url: str, name_folder: str, token, expected_result) -> int:
-        result = make_folder(url, name_folder, token)
-        self.assertEqual(result, expected_result)
+    def test_make_folder(self, name_folder: str, expected_result: int):
+        result = self.api_ya.make_folder(name_folder)
+        print(result[0], expected_result)
+        try:
+            self.assertEqual(result[0], expected_result)
+            self.name = name_folder
+            print(f"Папка с именем {name_folder} успешно создана")
+        except:
+            if result[0] == 200:
+                print(f"Папка с именем {name_folder} уже существует на диске")
+
+    def tearDown(self):
+        self.api_ya.dell_folder(self.name)

@@ -1,13 +1,10 @@
-import os
-from dotenv import load_dotenv
-from make_folders import make_folder
-
-BASE_URL = "https://cloud-api.yandex.net/v1/disk/resources?path="
+from yandex_disc import YaDisc
 
 if __name__ == '__main__':
-    load_dotenv()
-    token = os.getenv("TOKEN")
 
-    print(make_folder(BASE_URL, "new_folder", token))
+    add_folder = YaDisc()
+
+    print(add_folder.make_folder("first_folder"))
+    print(add_folder.make_folder("second_folder"))
 
 
